@@ -41,3 +41,7 @@ output "windows_private_ips"{
 output "windows_public_ips"{
   value = module.vmwindows-n01729752.windows_public_ips
 }
+
+output "db_server_name" {
+  value = module.database-n01729752.db_server_name
+}
