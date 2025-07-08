@@ -1,14 +1,14 @@
-module "resource_group" {
+module "rgroup-n01729752" {
   source     = "./modules/rgroup-n01729752"
   rg_name = "n01729752-RG"
   rg_location = "East US"
   tags = local.common_tags
 }
 
-module "network" {
+module "network-n01729752" {
   source = "./modules/network-n01729752"
-  rg_name = module.resource_group.rg_name
-  rg_location = module.resource_group.rg_location
+  rg_name = module.rgroup-n01729752.rg_name
+  rg_location = module.rgroup-n01729752.rg_location
 
   vnet = "n01729752-VNET"
   vnet_space = ["10.0.0.0/16"]
@@ -36,10 +36,10 @@ module "network" {
   tags = local.common_tags
 }
 
-module "common" {
+module "common-n01729752" {
   source = "./modules/common-n01729752"
-  rg_name = module.resource_group.rg_name
-  rg_location = module.resource_group.rg_location
+  rg_name = module.rgroup-n01729752.rg_name
+  rg_location = module.rgroup-n01729752.rg_location
 
   log_analytics_workspace_name = "9752law"
   recovery_services_vault_name = "rsv9752"
@@ -55,4 +55,37 @@ locals {
     ExpirationDate = "2024-12-31"
     Environment    = "Learning"
   }
+}
+
+module "vmwindows-n01729752" {
+  source = "./modules/vmwindows-n01729752"
+  rg_name = module.rgroup-n01729752.rg_name
+  rg_location = module.rgroup-n01729752.rg_location
+
+  windows_os_disk = {
+    caching = "ReadWrite"
+    disk_size_gb = 128
+    storage_account_type = "StandardSSD_LRS"
+  }
+
+  windows_os_info = {
+    publisher = "MicrosoftWindowsServer"
+    offer = "WindowsServer"
+    sku = "2016-Datacenter"
+    version = "latest"
+  }
+
+  extension_setting = {
+    name = "IaaSAntimalware"
+    publisher = "Microsoft.Azure.Security"
+    type = "IaaSAntimalware"
+    type_handler_version = "1.5"
+  }
+
+  storage_account_uri = module.common-n01729752.storage_account_primary_blob_endpoint
+  windows_avs = "windows-aset"
+  tags = local.common_tags
+
+  subnet_id = module.network-n01729752.subnet_id
+  vm_count = 1
 }
