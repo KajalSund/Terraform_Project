@@ -18,7 +18,7 @@ resource "azurerm_recovery_services_vault" "n01729752-RSV" {
 }
 
 resource "azurerm_storage_account" "n01729752-SA-Common" {
-  name = var.common_storage_account_name
+  name = "${var.common_storage_account_name}7472"
   location            = var.rg_location
   resource_group_name = var.rg_name
   account_tier            = "Standard"

@@ -4,7 +4,7 @@ resource "azurerm_public_ip" "windows_pip" {
   location            = var.rg_location
   resource_group_name = var.rg_name
   allocation_method   = "Static"
-  domain_name_label = "win-9752vm${count.index}"
+  domain_name_label = "win-7472vm${count.index}"
 
   tags = var.tags
 }
@@ -28,7 +28,7 @@ resource "azurerm_network_interface" "windows_nic" {
 resource "azurerm_windows_virtual_machine" "vmwindows" {
   count = var.vm_count
   name = "${var.rg_name}-win-vm-${count.index}"
-  computer_name = "9752-win-${count.index}"
+  computer_name = "7472-win-${count.index}"
   location            = var.rg_location
   resource_group_name = var.rg_name
   size                = "Standard_B1ms"

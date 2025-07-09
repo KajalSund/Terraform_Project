@@ -1,7 +1,7 @@
 module "rgroup-n01729752" {
   source     = "./modules/rgroup-n01729752"
   rg_name = "n01729752-RG"
-  rg_location = "East US"
+  rg_location = var.location
   tags = local.common_tags
 }
 
@@ -48,13 +48,16 @@ module "common-n01729752" {
   tags = local.common_tags
 }
 
-locals {
-  common_tags = {
-    Assignment     = "CCGC 5502 Automation Assignment"
-    Name           = "Haodong Mai, Kajal"
-    ExpirationDate = "2024-12-31"
-    Environment    = "Learning"
-  }
+module "vmlinux-n01729752" {
+  source                 = "./modules/vmlinux-n01729752"
+  prefix                 = "n01729752"
+  location               = var.location
+  rg_name                = module.rgroup-n01729752.rg_name
+  subnet_id              = module.network-n01729752.subnet_id
+  boot_diag_storage_uri = module.common-n01729752.storage_account_primary_blob_endpoint
+  ssh_public_key_path    = "~/.ssh/id_rsa.pub"
+  ssh_private_key_path   = "~/.ssh/id_rsa"
+  tags                   = local.common_tags
 }
 
 module "vmwindows-n01729752" {
@@ -96,8 +99,11 @@ module "database-n01729752" {
   rg_location = module.rgroup-n01729752.rg_location
 
   db_server_setting = {
-    sku_name = "B_Gen5_1"
-    storage_mb = 5120
+    sku_name     = "B_Standard_B1ms"
+    sku_tier     = "Burstable"
+    sku_capacity = 1
+    sku_family   = "Gen5"
+    storage_mb = 32768
     version = "11"
     administrator_login = "pgadmin"
     administrator_login_password = "H@Sh1CoR3!"
@@ -119,7 +125,7 @@ module "datadisk-n01729752" {
   rg_name = module.rgroup-n01729752.rg_name
   rg_location = module.rgroup-n01729752.rg_location
 
-  vm_ids = concat(module.vmlinux-n01729752.vm_ids, module.vmwindows-n01729752.vm_ids) # Please change vmlinux module to your module name
+  vm_ids = concat(values(module.vmlinux-n01729752.vm_ids), module.vmwindows-n01729752.vm_ids)
 
   data_disk_setting = {
     storage_account_type = "Standard_LRS"
@@ -134,4 +140,16 @@ module "datadisk-n01729752" {
 
   disk_count = 4
   tags = local.common_tags
+}
+
+module "loadbalancer-n01729752" {
+  source      = "./modules/loadbalancer-n01729752"
+  rg_name     = module.rgroup-n01729752.rg_name
+  rg_location = module.rgroup-n01729752.rg_location
+  tags        = local.common_tags
+  vm_nics     = [
+    module.vmlinux-n01729752.nic_ids["7472-centos1"],
+    module.vmlinux-n01729752.nic_ids["7472-centos2"],
+    module.vmlinux-n01729752.nic_ids["7472-centos3"],
+  ]
 }

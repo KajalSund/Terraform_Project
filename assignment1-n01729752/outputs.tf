@@ -45,3 +45,25 @@ output "windows_public_ips"{
 output "db_server_name" {
   value = module.database-n01729752.db_server_name
 }
+
+# Linux VM outputs
+output "linux_hostnames" {
+  value = module.vmlinux-n01729752.hostnames
+}
+
+output "linux_dns_names" {
+  value = module.vmlinux-n01729752.dns_names
+}
+
+output "linux_private_ips" {
+  value = module.vmlinux-n01729752.private_ips
+}
+
+output "linux_public_ips" {
+  value = module.vmlinux-n01729752.public_ips
+}
+
+# Load Balancer output
+output "load_balancer_name" {
+  value = module.loadbalancer-n01729752.load_balancer_name
+}

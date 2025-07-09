@@ -12,8 +12,8 @@ resource "azurerm_managed_disk" "n01729752-DATADISK" {
 
 resource "azurerm_virtual_machine_data_disk_attachment" "n01729752-DATADISK_ATTACH" {
   count              = var.disk_count
-  managed_disk_id    = azurerm_managed_disk.data_disk[count.index].id
+  managed_disk_id    = azurerm_managed_disk.n01729752-DATADISK[count.index].id
   virtual_machine_id = var.vm_ids[count.index]
   lun                = var.data_disk_attach.lun
-  caching           = var.data_disk_attach.caching
+  caching            = var.data_disk_attach.caching
 }
