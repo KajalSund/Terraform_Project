@@ -2,6 +2,10 @@
 
 This project provisions a complete Azure infrastructure using Terraform with a modular architecture. It supports scalable Linux and Windows virtual machine deployments along with networking, storage, load balancing, and monitoring resources. The solution is built to be reusable, parameterized, and non-interactive.
 
+## Demo Video
+
+[![Watch the demo](https://img.youtube.com/vi/sr2j0ZDPQqw/0.jpg)](https://www.youtube.com/watch?v=sr2j0ZDPQqw)
+
 ## Project Features
 
 - Modularized Terraform structure for maintainability and reuse
